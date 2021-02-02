@@ -10,9 +10,12 @@ This repository contains NESL's solution in the NeurIPS 2020 hide-and-seek priva
 
 Conpetition website: 
 https://www.vanderschaar-lab.com/privacy-challenge/
+
 Competition Publications:
+https://arxiv.org/abs/2007.12087
 
 Scoreboard: https://docs.google.com/spreadsheets/d/1L_WSLckNBAdVb7HGIUVuqh2JjX_D0KlX/edit#gid=423478332
+
 Challenge codebase:
 https://bitbucket.org/mvdschaar/mlforhealthlabpub/src/master/app/hide-and-seek/
 
@@ -55,7 +58,9 @@ The original codebase is provided by the organizers in the [Challenge Codebase](
 ```
 ### 2.2 How to Run the Code
 (1) Envionment: Python>=3.6, Python package requirements are specified in requirements.txt. A virtual python envionment is preferred.
+
 (2) Rename the files: In the root directory, among hider_*.py  and seeker_*.py, select out the hider method and the seeker method you want to use. Make a **copy** of the corresponding file in the root directory, and **rename** the copy as hider.<nolink>py and seeker.<nolink>py seperately. The two modules will then be called by main<nolink>.py.
+
 (3) Run main.<nolink>py
 ```
 python main.py
@@ -68,10 +73,16 @@ python main.py --help
 ## 3 Baselines
 
 ### 3.1 Hider: Addnoise
+The add-noise baseline simply adds Gaussian noise, N (0, σ2), to each element of the feature
+vector. The added noise are all i.i.d, and σ needed to be specified as input.
 
 ### 3.2 Hider: TimeGAN
+The Time-GAN baseline is explained in full in [Yoon et al. [2019]](https://www.damtp.cam.ac.uk/user/dkj25/pdf/yoon2019time.pdf). The general idea is to train a Time-series Generative Adversarial Network on the orignal data, and generate a synthetic data of the same size.
+
 
 ### 3.3 Seeker: KNN
+To explain the baseline algorithms, we have to introduce some notations. 
+
 
 ### 3.4 Seeker: Binary Classifier
 
@@ -81,7 +92,7 @@ python main.py --help
 ## 4 Our Solutions
 
 ### 4.1 Hider: Adversarial Noise Generation
-This method is inspired by [Fawkes](https://sandlab.cs.uchicago.edu/fawkes/#paper) by Shan S. et. al. The general idea is to add noise to the data, where the noise is trained in a adversarial way. A trained feature extraction neural network will generate a feature embedding for each data entry. A small perturbation in the raw data entry may cause its embedding to change drastically because of the inconsistency of neual network functions. The added noise is trained to "drag" the feature embedding of the current data entry towards that of a data entry from a different user so that their identity can be confused. 
+This method is inspired by [Fawkes by Shan S. et. al. [2020]](https://sandlab.cs.uchicago.edu/fawkes/#paper) . The general idea is to add noise to the data, where the noise is trained in a adversarial way. A trained feature extraction neural network will generate a feature embedding for each data entry. A small perturbation in the raw data entry may cause its embedding to change drastically because of the inconsistency of neual network functions. The added noise is trained to "drag" the feature embedding of the current data entry towards that of a data entry from a different user so that their identity can be confused. 
 
 The method can be visualized as follows:
 ![1.png](https://i.loli.net/2021/02/03/8U2y1ZzvDxCLOhE.png)
@@ -91,7 +102,7 @@ Step1: Train a CNN-based feature extractor using a siamese way. The feature extr
 
 Step2: Define a CNN with exactly the same structure, except for that in the input layer we add a noise layer of the same dimension. Then we copy the trained CNN weights and fix them. The only learnable thing is the noise.
 
-Step3: For each user (data entry $x_1$), select another user ($x_2$) whose embedding is very different. Then we train the noise to move the current embedding($x_1+noise$) towards embedding($x_2$). Then retrun ($x_1+noise_{opt}$) as the generated data. Repeat for all the users.
+Step3: For each user (data entry x1), select another user (x3) whose embedding is very different. Then we train the noise to move the current embedding f(x1+noise) towards embedding f(x3). Then retrun (x1+noise_opt) as the generated data. Repeat for all the users.
 
 A sketch pseudo-code:
 ![Screenshot from 2021-02-01 19-32-55.png](https://i.loli.net/2021/02/03/Vz2Iu5q1PSmONW9.png)
@@ -118,7 +129,7 @@ For each feature dimension (in this example, feature #32), we aggregate the data
 Through this method, we swap the data values of different users and introduce some "quantization noise" to confuse the seekers.
 
 Pesudo Code:
-![Screenshot from 2021-02-02 15-00-12.png](https://i.loli.net/2021/02/03/dEp6jGbS1HkrJnD.png)
+![Screenshot from 2021-02-02 15-00-12.png](https://i.loli.net/2021/02/03/Va3bTNrYRqxHgvS.png)
 
 
 ### 4.4 Seeker: TimeKNN
@@ -127,7 +138,7 @@ This is a modified version of the baseline KNN seeker (See Section 3.3 for detai
 Pesudo Code:
 ![Screenshot from 2021-02-02 14-51-29.png](https://i.loli.net/2021/02/03/JGE7phCi3vNW9kH.png)
 
-## A Link to Other Team's Solutions
+## 5 A Link to Other Team's Solutions
 For reference, submitted codes from all the teams are available on the organizers' GitHub: https://github.com/vanderschaarlab/hide-and-seek-submissions. We put the links here for your reference.
 
 
