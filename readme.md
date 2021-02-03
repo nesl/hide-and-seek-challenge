@@ -1,11 +1,11 @@
 # NESL Golden_Fleece Team's Solutons to the NeurIPS 2020 Hide-and-seek Privacy Challenge 
 
-This repository contains NESL's solution in the NeurIPS 2020 hide-and-seek privacy challenge. Our team is named Golden_Fleece and we are the runner-up in the challenge's hider track. 
+This repository contains NESL's solutionS in the NeurIPS 2020 hide-and-seek privacy challenge. Our team is named Golden_Fleece, and we are the runner-up in the challenge's hider track. 
 
-## 1. Background of the Competition
+## 1. Background
 ### 1.1. Privacy Issue in Medical Data and the Hide and Seek Challenge
 
-Clinical time series, combined with ML, can enable powerful inferences about the health of individuals or larger populations of users.  However, healthcare datasets often contain sensitive information about its patients.  Thus, one approach to providing this clinical time series data is via synthetic generation, where the goal is to preserve the utility of the time series data with respect to certain inferences, yet ensure privacy.  The formulation of utility and privacy will be defined later.
+Clinical time series, combined with ML, can enable powerful inferences about the health of individuals or larger populations. However, healthcare datasets often contain sensitive information about its patients.  Thus, one approach to providing this clinical time series data is via synthetic generation, where the goal is to preserve the utility of the time series data with respect to certain inferences, yet ensure privacy.  The formulation of utility and privacy will be defined later.
 
 In this Hide-and-Seek Privacy Challenge, several teams compete against each other in two tracks: hiders and seekers.  Teams that are joining as hiders must generate synthetic data for a subset of patients from the AmsterdamUMCdb dataset.  This synthetic data must be able to meet a minimal threshold on several utility metrics.  On the other hand, teams joining as seekers must try to break the privacy of the synthesized data from the hiders, by performing a membership inference attack (discussed later).
 
@@ -19,14 +19,18 @@ The first metric is feature prediction.  A feature predictor NN is trained to pr
 
 The second metric is 1-step-ahead prediction, where a NN is trained to predict the value of all features at the last time step in the clinical time series.  Like the feature prediction, two networks are trained - one for the original data, and another for the privacy-preserving data.  Both are evaluated on some testing set (of the original data), with the hopes that the NN trained on privacy-preserving data performs comparably to the NN trained on the original training data.
 
-On the other hand, this competition formulates privacy as vulnerability to membership inference attacks.  In a broad sense, the goal of membership inference attacks is to infer whether or not a given data point was part of a given dataset.  In this competition, an seeker has data from multiple patients (i.e. call them A,B,C,D).  However, privacy-preserving data is generated from some subset of patients (i.e. B,C) - the seekers are assumed to have more data than than the hiders.  If seekers can determine which of the original patients (A,B,C,D) correspond to the privacy-preserving data (i.e. B,C), they have successfully performed the membership inference attack.  The goal of hiders is to generate synthetic data that prevents the success of such attacks.
+On the other hand, this competition formulates privacy as vulnerability to membership inference attacks.  In a broad sense, the goal of membership inference attacks is to infer whether or not a given data point was part of a given dataset. 
+
+Particulary in this competition, the full dataset (also known as the **enlarged dataset**) contains data from multiple patients (e.g. we can call them A,B,C,D).  On the hider side, the privacy-preserving data (or **synthetic dataset**, marked as E,F) is generated from a subset of patients (e.g. B,C). The seekers will have access to both the enlarged dataset and the synthetic dataset (i.e., A,B,C,D,E,F), while the hiders have access to (B,C) only.  If seekers can determine which of the original patients (A,B,C,D) are used to generate the privacy-preserving data (E,F), they have successfully performed the membership inference attack. In this example, the ideal output of the seeker is (B,C). he goal of hiders is to generate synthetic data that prevents the success of such attacks.
+
+
 
 ### 1.3. Summary of goals
-There are two roles (types of algorithms) in this challenge, namely the **hider** and the **seeker**
+Again, there are two roles (types of algorithms) in this challenge, namely the **hider** and the **seeker**
 
-Hiders must generate synthetic data from a subset of randomly chosen patients in the AmsterdamUMCdb.  The synthetic data must meet a minimal threshold on both feature prediction, as well as one-step ahead prediction.  In addition, it must minimize the success of membership inference attacks.  
+Hiders must generate synthetic data from a subset of randomly chosen patients in the AmsterdamUMCdb.  The synthetic data must meet a minimal threshold on both feature prediction, as well as one-step ahead prediction.  In addition, it must minimize the success of membership inference attacks. 
 
-Seekers must perform membership inference attacks on the synthesized data from the hiders.  Seekers have access to N users' clinical time series data.  Of this data, hiders are given N/2 users' data in order to generate their synthetic data.  Seekers are not aware of which N/2 users were given to the hiders.  Thus, seekers must determine which of the N/2 users from the original data were used to generate the synthetic data.  In other words, this is a binary classification - either each user was 'originating member' (used to create the synthetic data) or a 'non member' (not used to create the synthetic data).
+Seekers must perform membership inference attacks on the synthesized data from the hiders.  Seekers have access to 2N users' clinical time series data (known as the enlarged data).  Of this data, hiders are given half of the users' data (size N) in order to generate their synthetic data.  Seekers are not aware of which N users were given to the hiders.  Thus, seekers must determine which of the N users from the enlarged data were used to generate the synthetic data.  In other words, this is a binary classification - each user in the enlarged dataset is either  'originating member' (used to create the synthetic data) or a 'non member' (not used to create the synthetic data).
 
 
 ### 1.4. Additional Challenge Resources
@@ -37,11 +41,10 @@ https://arxiv.org/pdf/2007.12087.pdf
 Overview of the challenge: 
 https://www.vanderschaar-lab.com/privacy-challenge/
 
-Scoreboard: https://docs.google.com/spreadsheets/d/1L_WSLckNBAdVb7HGIUVuqh2JjX_D0KlX/edit#gid=423478332
-
 Challenge codebase:
 https://bitbucket.org/mvdschaar/mlforhealthlabpub/src/master/app/hide-and-seek/
 
+Scoreboard: https://docs.google.com/spreadsheets/d/1L_WSLckNBAdVb7HGIUVuqh2JjX_D0KlX/edit#gid=423478332
 
 
 ## 2. How to Use These Code
@@ -60,18 +63,18 @@ The original codebase is provided by the organizers in the [Challenge Codebase](
 │	│   ├── Each folder contains the supporting code and documents of one solution
 ├── orgainzers/                     # Documentations from the challenge organizers.
 ├── utils/                          # Utilities code folder, can be used by code imported in solutions.
-├── hider_*.py                  # Hider solution module, containing the hider function.
-├── seeker_*.py                 # Seeker solution module, containing the seeker function.
-├── main.py                     # Script for testing solutions locally.
-├── make_hider.sh               # Helper bash script for zipping up a hider solution. Not needed if you run the coded locally.
-├── make_seeker.sh              # Helper bash script for zipping up a seeker solution. Not needed if you run the coded locally.
+├── hider_*.py                      # Hider solution module, containing the hider function.
+├── seeker_*.py                     # Seeker solution module, containing the seeker function.
+├── main.py                         # Script for testing solutions locally.
+├── make_hider.sh                   # Helper bash script for zipping up a hider solution. Not needed if you run the coded locally.
+├── make_seeker.sh                  # Helper bash script for zipping up a seeker solution. Not needed if you run the coded locally.
 ├── readme.md                       # This README.
 └── requirements.txt                # The requirements file for local debugging.
 ```
 ### 2.2. How to Run the Code
 (1) Envionment: Python>=3.6, Python package requirements are specified in requirements.txt. A virtual python envionment is preferred.
 
-(2) Rename the files: In the root directory, among hider_*.py  and seeker_*.py, select out the hider method and the seeker method you want to use. Make a **copy** of the corresponding file in the root directory, and **rename** the copy as hider.<nolink>py and seeker.<nolink>py seperately. The two modules will then be called by main<nolink>.py.
+(2) Rename the files: In the root directory, among hider<nolink>\_\*.py  and seeker<nolink>\_\*.py, select out the hider method and the seeker method you want to use. Make a **copy** of the corresponding file in the root directory, and **rename** the copy as hider.<nolink>py and seeker.<nolink>py seperately. The two modules will then be called by main<nolink>.py.
 
 (3) Run main.<nolink>py
 ```
@@ -85,27 +88,27 @@ python main.py --help
 ## 3. Baselines
 
 ### 3.1. Hider: Addnoise
-Adds Gaussian noise to every value in the dataset with zero mean and a standard deviation as a hyperparameter. The added noise are all i.i.d, and the standard deviation needed to be specified as input.
+This method will add Gaussian noise to every value in the dataset with zero mean and a standard deviation as a hyperparameter. The added noise are all i.i.d, and the standard deviation needed to be specified as input.
 
 ### 3.2. Hider: TimeGAN
-As an extremely high level overview, this method uses Generative Adversarial Networks (GANs) to create synthetic data.  The general idea is to train a Time-series Generative Adversarial Network on the orignal data, and generate a synthetic data of the same size.
+As an extremely high level overview, this method uses Generative Adversarial Networks (GANs) to create synthetic data.  The general idea is to train a Time-series Generative Adversarial Network on a selected subset of the enlarged dataset (the size of the enlarged data is 2N, and the subset has size N), and then generate a synthetic data of the same size N.
 
 The Time-GAN baseline is explained in full in [Yoon et al. [2019]](https://www.damtp.cam.ac.uk/user/dkj25/pdf/yoon2019time.pdf). This work seeks to generate realistic time series data to capture both temporal dynamics of the time series, as well as the ability to generate new sequences of synthetic data.  Formally, they seek to model two distributions - a global joint distribution of features which represents how 'realistic' the time series is, as well as a local conditional distribution of features over time (meant to capture the temporal dynamics between datapoints in a sequence).
 
 
-### 3.3 Seeker: KNN
-To explain the baseline algorithms, we have to introduce some notations. 
+### 3.3. Seeker: KNN
 
-Since seekers are given both the original data (2N users) and the synthetic data (N users), this approach computes the distance between each user's time series in the original data to each user in the synthetic data.  The closest N users in the original data are selected and predicted as 'originating members' (used to create the synthetic data).
-### 3.4 Seeker: Binary Classifier
+Since seekers are given both the enlarged data(2N users) and the synthetic data (N users), this approach computes the distance between each user's time series in the enlarged data to each user in the synthetic data.  The closest N users in the enlarged data are selected and predicted as 'originating members' (used to create the synthetic data).
 
-Similar to the Nearest Neighbor method, this approach trains a binary classifier using both the original data and synthetic data.  All patient data in the original dataset are labelled as 1, and all patient data in the synthetic data are marked as 0.  Finally, to determine the 'originating members', they perform inference on the original dataset again (contains 2N users), and pick the top N lowest predictions as the 'originating members' (used to create the synthetic data).
+### 3.4. Seeker: Binary Classifier
+
+Similar to the Nearest Neighbor method, this approach trains a binary classifier using both the enlarged data and synthetic data.  All patient data in the enlarged dataset are labelled as 1, and all patient data in the synthetic data are marked as 0.  Finally, to determine the 'originating members', they perform inference on the enlarged dataset again (contains 2N users), and pick the top N lowest predictions as the 'originating members' (used to create the synthetic data).
 
 
-## 4 Our Solutions
+## 4. Our Solutions
 
-### 4.1 Hider: Adversarial Noise Generation
-This method is inspired by [Fawkes by Shan S. et. al. [2020]](https://sandlab.cs.uchicago.edu/fawkes/#paper) . The general idea is to add noise to the data, where the noise is trained in a adversarial way. A trained feature extraction neural network will generate a feature embedding for each data entry. A small perturbation in the raw data entry may cause its embedding to change drastically because of the inconsistency of neual network functions. The added noise is trained to "drag" the feature embedding of the current data entry towards that of a data entry from a different user so that their identity can be confused. 
+### 4.1. Hider: Adversarial Noise Generation
+This method is inspired by [Fawkes by Shan S. et. al. [2020]](https://sandlab.cs.uchicago.edu/fawkes/#paper) . The general idea is to add noise to the data, where the noise is trained in a adversarial way. A trained feature extraction neural network will generate a feature embedding for each data entry. A small perturbation in the raw data entry may cause its embedding to change drastically because of the discontinuity of the function appximated by the neual network. The added noise is trained to "drag" the feature embedding of the current data entry towards that of a data entry from a different user so that their identity can be confused.
 
 The method can be visualized as follows:
 ![1.png](https://i.loli.net/2021/02/03/8U2y1ZzvDxCLOhE.png)
@@ -121,7 +124,7 @@ A sketch pseudo-code:
 ![Screenshot from 2021-02-01 19-32-55.png](https://i.loli.net/2021/02/03/Vz2Iu5q1PSmONW9.png)
 
 
-### 4.2 Hider: Genetic Noise Adder
+### 4.2. Hider: Genetic Noise Adder
 We apply the genetic algorithm to find synthetic data that meets the utility threshold and has maximal noise in this hider implementation.
 
 
@@ -147,7 +150,7 @@ Persudo Code:
 ![Screenshot from 2021-02-02 15-02-44.png](https://i.loli.net/2021/02/03/2Ig9wil3FETA8kh.png)
 
 
-### 4.3 Hider: Binning and Swapping
+### 4.3. Hider: Binning and Swapping
 In this hider algorithm, we introduce noise to the data by grouping the datapoints in each feature dimension based on their cumulative distribution, and randomly switch the datapoints that falls into the same bin.
 
 The following figure illustrates our solutions, we take one feature dimension as an example:
