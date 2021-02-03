@@ -1,4 +1,4 @@
-# NESL Golden_Fleece Team's Solutons to the NeurIPS 2020 Hide-and-seek Privacy Challenge 
+# NESL Golden_Fleece Team's Solutions to the NeurIPS 2020 Hide-and-seek Privacy Challenge 
 
 This repository contains NESL's solutionS in the NeurIPS 2020 hide-and-seek privacy challenge. Our team is named Golden_Fleece, and we are the runner-up in the challenge's hider track. 
 
@@ -58,9 +58,9 @@ The original codebase is provided by the organizers in the [Challenge Codebase](
 ├── dockerfiles/                    # Dockerfile examples and a helper bash script for building docker containers. Not needed if you run the coded locally.
 ├── examples/                       # Solutions code (including baseline solutions).
 │   │── hider/                      # Example hiders.
-│	│   ├── Each folder contains the supporting code and documents of one solution
+│	│   ├── Each folder contains the supporting code and documents of one solution - only the baselines will have their source code here, whereas our solutions' source code is located in the top level directory, as "hider_*.py"
 │   └── seeker/                     # Example seekers.
-│	│   ├── Each folder contains the supporting code and documents of one solution
+│	│   ├── Each folder contains the supporting code and documents of one solution - only the baselines will have their source code here, whereas our solutions' source code is located in the top level directory, as "seeker_*.py"
 ├── orgainzers/                     # Documentations from the challenge organizers.
 ├── utils/                          # Utilities code folder, can be used by code imported in solutions.
 ├── hider_*.py                      # Hider solution module, containing the hider function.
@@ -146,7 +146,7 @@ The genetic algorithm requires several steps:
 
 4. Until we reach some maximum number of generations (or all candidates fail the fitness test.)
 
-Persudo Code:
+Pseudo Code:
 ![Screenshot from 2021-02-02 15-02-44.png](https://i.loli.net/2021/02/03/2Ig9wil3FETA8kh.png)
 
 
