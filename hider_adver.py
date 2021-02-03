@@ -90,7 +90,7 @@ def hider(input_dict: Dict) -> Union[np.ndarray, Tuple[np.ndarray, Optional[np.n
 
 
     # TODO: Put your hider code to replace Example 1 below.
-    from adver import adver
+    from examples.hider.adver import adver
     original_data, min_val, max_val = MinMaxScaler(original_data)
 
     generated_data = adver.adver(original_data) # Main hider function
